@@ -1,0 +1,19 @@
+Package: nested.comms
+Title: Nested community detection 
+Version: 0.1
+Authors@R: 
+    person(given = "Imre",
+           family = "Gera",
+           role = c("aut", "cre"),
+           email = "gerai@inf.u-szeged.hu",
+           comment = c(ORCID = "0000-0001-6814-9950"))
+Description: This package provides implements a community detection algorithm that can find overlapping nested communities in graphs.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+LinkingTo: 
+    Rcpp
+Imports: 
+    Rcpp

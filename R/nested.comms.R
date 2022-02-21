@@ -1,0 +1,2 @@
+#' @useDynLib nested.comms
+NULL
