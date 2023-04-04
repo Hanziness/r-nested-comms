@@ -1,96 +1,110 @@
 #include <Rcpp.h>
+#include "is_2k2_neigh.h"
 using namespace Rcpp;
 
-//' Checks if there is a $2K_2$ between two vertices in graph `g`
-//' by calculating $|N(v1) cap N(v2)| / min(|N(v1)|, |N(v2)|)$.
-//' This version uses only the neighborhoods of said vertices, optionally
-//' excluding `v1` and `v2` from each other's neighborhoods if `v1` or
-//' `v2` are non-negative.
-//' @param n1 The neighborhood of `v1`
-//' @param n2 The neighborhood of `v2`
-//' @param v1 (Optional) The first vertex of the pair
-//' @param v2 (Optional) The second vertex of the pair
-//' @return A boolean indicating whether there is a 2K_2 between `v1` and `v2`
-// [[Rcpp::export]]
-bool is_2k2_neigh(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -1)
-{
-    if (v1 >= 0)
-    {
-        n1 = setdiff(n1, NumericVector::create(v2));
-    }
-    if (v2 >= 0)
-    {
-        n2 = setdiff(n2, NumericVector::create(v1));
+bool is_2k2_neigh_cpp(std::vector<int>& n1, std::vector<int>& n2, int v1 = -1, int v2 = -1) {
+    std::vector<int> n1_vec, n2_vec;
+
+    n1_vec.reserve(n1.size());
+    n2_vec.reserve(n2.size());
+
+    std::copy_if(n1.begin(), n1.end(), std::back_inserter(n1_vec), [v2](int x)
+                 { return x != v2; });
+    std::copy_if(n2.begin(), n2.end(), std::back_inserter(n2_vec), [v1](int x)
+                 { return x != v1; });
+
+    std::vector<int> intersection;
+
+    std::set_intersection(
+        n1_vec.begin(),
+        n1_vec.end(),
+        n2_vec.begin(),
+        n2_vec.end(),
+        std::back_inserter(intersection));
+
+    auto intersect_length = intersection.size();
+
+    if (intersect_length > 0) {
+        return !(intersect_length == n1_vec.size() || intersect_length == n2_vec.size());
+    } else if (intersect_length == 0 && v1 >= 0 && v2 >= 0) {
+        bool n1_match = std::count(n1_vec.begin(), n1_vec.end(), v2);
+        bool n2_match = std::count(n2_vec.begin(), n2_vec.end(), v1);
+
+        return !(n1_match || n2_match);
     }
 
-    int intersect_length = intersect(n1, n2).length();
-
-    return !(intersect_length > 0 && (intersect_length == n1.length() || intersect_length == n2.length()));
+    return true;
 }
 
-//' Checks if there is a $2K_2$ between two vertices in graph `g`
-//' by calculating $|N(v1) cap N(v2)| / min(|N(v1)|, |N(v2)|)$.
-//' This version uses only the neighborhoods of said vertices, optionally
-//' excluding `v1` and `v2` from each other's neighborhoods if `v1` or
-//' `v2` are non-negative.
-//' @param n1 The neighborhood of `v1`
-//' @param n2 The neighborhood of `v2`
-//' @param v1 (Optional) The first vertex of the pair
-//' @param v2 (Optional) The second vertex of the pair
-//' @param treshold A value (between 0 and 1) that is still accepted as nested.
-//' @return A boolean indicating whether there is a 2K_2 between `v1` and `v2`
-// [[Rcpp::export]]
-bool is_2k2_neigh_treshold(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -1, float treshold = 1.0)
-{
-    if (v1 >= 0)
-    {
-        n1 = setdiff(n1, NumericVector::create(v2));
-    }
-    if (v2 >= 0)
-    {
-        n2 = setdiff(n2, NumericVector::create(v1));
+int nested_direction_cpp(const std::vector<int>& n1, const std::vector<int>& n2, int v1 = -1, int v2 = -1) {
+    std::vector<int> n1_vec, n2_vec;
+
+    n1_vec.reserve(n1.size());
+    n2_vec.reserve(n2.size());
+
+    std::copy_if(n1.begin(), n1.end(), std::back_inserter(n1_vec), [v2](int x)
+                 { return x != v2; });
+    std::copy_if(n2.begin(), n2.end(), std::back_inserter(n2_vec), [v1](int x)
+                 { return x != v1; });
+
+    std::vector<int> intersection;
+
+    std::set_intersection(
+        n1_vec.begin(),
+        n1_vec.end(),
+        n2_vec.begin(),
+        n2_vec.end(),
+        std::back_inserter(intersection));
+
+    auto intersect_length = intersection.size();
+
+    if (intersect_length > 0) {
+        if (intersect_length == n1_vec.size()) {
+            return 1;
+        }
+        else if (intersect_length == n2_vec.size())
+        {
+            return -1;
+        }
+        else
+        {
+            return 0;
+        }
+    } else if (intersect_length == 0 && v1 >= 0 && v2 >= 0) {
+        // the intersection is empty but n1 contains v2 or n2 contains v1
+        bool n1_match = std::count(n1_vec.begin(), n1_vec.end(), v2);
+        bool n2_match = std::count(n2_vec.begin(), n2_vec.end(), v1);
+
+        if (n1_match) {
+            return 1;
+        } else if (n2_match) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
 
-    int minlen = n1.length() < n2.length() ? n1.length() : n2.length();
-
-    if (minlen < 1)
-    {
-        return false;
-    }
-
-    return ((float)intersect(n1, n2).length() / minlen) < treshold;
+    return 0;
 }
 
-//' Checks if there is a $2K_2$ between two vertices in graph `g`
-//' by calculating $|N(v1) cap N(v2)| / min(|N(v1)|, |N(v2)|)$.
-//' This version uses only the neighborhoods of said vertices, optionally
-//' excluding `v1` and `v2` from each other's neighborhoods if `v1` or
-//' `v2` are non-negative.
-//' @param n1 The neighborhood of `v1`
-//' @param n2 The neighborhood of `v2`
-//' @param v1 (Optional) The first vertex of the pair
-//' @param v2 (Optional) The second vertex of the pair
-//' @param treshold A value (between 0 and 1) that is still accepted as nested.
-//' @return A boolean indicating whether there is a 2K_2 between `v1` and `v2`
-//' @export
-// [[Rcpp::export]]
-float is_2k2_neigh_value(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -1)
-{
-    if (v1 >= 0)
-    {
-        n1 = setdiff(n1, NumericVector::create(v2));
-    }
-    if (v2 >= 0)
-    {
-        n2 = setdiff(n2, NumericVector::create(v1));
-    }
+bool is_2k2_neigh(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -1) {
+    std::vector<int> n1_vec, n2_vec;
+    n1_vec.reserve(n1.size());
+    n2_vec.reserve(n2.size());
 
-    int minlen = n1.length() < n2.length() ? n1.length() : n2.length();
+    std::copy(n1.begin(), n1.end(), std::back_inserter(n1_vec));
+    std::copy(n2.begin(), n2.end(), std::back_inserter(n2_vec));
 
-    if (minlen < 1)
-    {
-        return 0;
-    }
+    return nested_direction_cpp(n1_vec, n2_vec, v1, v2) == 0;
+}
 
-    return (float)(intersect(n1, n2).length()) / minlen;
+int nested_direction(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -1) {
+    std::vector<int> n1_vec, n2_vec;
+    n1_vec.reserve(n1.size());
+    n2_vec.reserve(n2.size());
+
+    std::copy(n1.begin(), n1.end(), std::back_inserter(n1_vec));
+    std::copy(n2.begin(), n2.end(), std::back_inserter(n2_vec));
+
+    return nested_direction_cpp(n1_vec, n2_vec, v1, v2);
 }

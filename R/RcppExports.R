@@ -11,38 +11,28 @@
 #' @param v1 (Optional) The first vertex of the pair
 #' @param v2 (Optional) The second vertex of the pair
 #' @return A boolean indicating whether there is a 2K_2 between `v1` and `v2`
-is_2k2_neigh <- function(n1, n2, v1 = -1L, v2 = -1L) {
-    .Call('_nested_comms_is_2k2_neigh', PACKAGE = 'nested.comms', n1, n2, v1, v2)
-}
-
-#' Checks if there is a $2K_2$ between two vertices in graph `g`
-#' by calculating $|N(v1) cap N(v2)| / min(|N(v1)|, |N(v2)|)$.
-#' This version uses only the neighborhoods of said vertices, optionally
-#' excluding `v1` and `v2` from each other's neighborhoods if `v1` or
-#' `v2` are non-negative.
-#' @param n1 The neighborhood of `v1`
-#' @param n2 The neighborhood of `v2`
-#' @param v1 (Optional) The first vertex of the pair
-#' @param v2 (Optional) The second vertex of the pair
-#' @param treshold A value (between 0 and 1) that is still accepted as nested.
-#' @return A boolean indicating whether there is a 2K_2 between `v1` and `v2`
-is_2k2_neigh_treshold <- function(n1, n2, v1 = -1L, v2 = -1L, treshold = 1.0) {
-    .Call('_nested_comms_is_2k2_neigh_treshold', PACKAGE = 'nested.comms', n1, n2, v1, v2, treshold)
-}
-
-#' Checks if there is a $2K_2$ between two vertices in graph `g`
-#' by calculating $|N(v1) cap N(v2)| / min(|N(v1)|, |N(v2)|)$.
-#' This version uses only the neighborhoods of said vertices, optionally
-#' excluding `v1` and `v2` from each other's neighborhoods if `v1` or
-#' `v2` are non-negative.
-#' @param n1 The neighborhood of `v1`
-#' @param n2 The neighborhood of `v2`
-#' @param v1 (Optional) The first vertex of the pair
-#' @param v2 (Optional) The second vertex of the pair
-#' @param treshold A value (between 0 and 1) that is still accepted as nested.
-#' @return A boolean indicating whether there is a 2K_2 between `v1` and `v2`
 #' @export
-is_2k2_neigh_value <- function(n1, n2, v1 = -1L, v2 = -1L) {
-    .Call('_nested_comms_is_2k2_neigh_value', PACKAGE = 'nested.comms', n1, n2, v1, v2)
+is_2k2_neigh <- function(n1, n2, v1, v2) {
+    .Call(`_nested_comms_is_2k2_neigh`, n1, n2, v1, v2)
+}
+
+#' Checks if there is a $2K_2$ between two vertices in graph `g`
+#' by calculating $|N(v1) cap N(v2)| / min(|N(v1)|, |N(v2)|)$.
+#' This version uses only the neighborhoods of said vertices, optionally
+#' excluding `v1` and `v2` from each other's neighborhoods if `v1` or
+#' `v2` are non-negative.
+#' @param n1 The neighborhood of `v1`
+#' @param n2 The neighborhood of `v2`
+#' @param v1 (Optional) The first vertex of the pair
+#' @param v2 (Optional) The second vertex of the pair
+#' @return The direction of nestedness between `v1` and `v2`. Returns 1 if `n1` contains `n2`, -1 if `n2` contains `n1` and 0 if the two nodes are not nested.
+#' @export
+nested_direction <- function(n1, n2, v1, v2) {
+    .Call(`_nested_comms_nested_direction`, n1, n2, v1, v2)
+}
+
+#' @export
+get_lk_all_topsort <- function(neighs) {
+    .Call(`_nested_comms_get_lk_all_topsort`, neighs)
 }
 
