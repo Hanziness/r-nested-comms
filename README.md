@@ -1,8 +1,8 @@
 # Nested Community Detection Algorithms
-This R package contains algorithms to find overlapping fully nested subgraphs in both bipartite and non-bipartite networks. This package is part of the work submitted in the form of an article. Please wait with using it until a published work is available:
+This R package contains algorithms to find overlapping fully nested subgraphs in both bipartite and non-bipartite networks. This package is part of the work submitted in the article *Detecting and generating overlapping nested communities*:
 
 ```
-TBA
+Gera, I., & London, A. (2023). Detecting and generating overlapping nested communities. Applied Network Science, 8(51). https://doi.org/10.1007/s41109-023-00575-2
 ```
 
 ## Installation
