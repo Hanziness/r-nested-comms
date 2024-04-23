@@ -38,6 +38,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// nestedness_value
+double nestedness_value(Rcpp::NumericVector n1, Rcpp::NumericVector n2, int v1, int v2);
+RcppExport SEXP _nested_comms_nestedness_value(SEXP n1SEXP, SEXP n2SEXP, SEXP v1SEXP, SEXP v2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n1(n1SEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type n2(n2SEXP);
+    Rcpp::traits::input_parameter< int >::type v1(v1SEXP);
+    Rcpp::traits::input_parameter< int >::type v2(v2SEXP);
+    rcpp_result_gen = Rcpp::wrap(nestedness_value(n1, n2, v1, v2));
+    return rcpp_result_gen;
+END_RCPP
+}
 // get_lk_all_topsort
 List get_lk_all_topsort(List neighs);
 RcppExport SEXP _nested_comms_get_lk_all_topsort(SEXP neighsSEXP) {
@@ -53,6 +67,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_nested_comms_is_2k2_neigh", (DL_FUNC) &_nested_comms_is_2k2_neigh, 4},
     {"_nested_comms_nested_direction", (DL_FUNC) &_nested_comms_nested_direction, 4},
+    {"_nested_comms_nestedness_value", (DL_FUNC) &_nested_comms_nestedness_value, 4},
     {"_nested_comms_get_lk_all_topsort", (DL_FUNC) &_nested_comms_get_lk_all_topsort, 1},
     {NULL, NULL, 0}
 };

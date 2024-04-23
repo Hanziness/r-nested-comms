@@ -108,3 +108,31 @@ int nested_direction(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -
 
     return nested_direction_cpp(n1_vec, n2_vec, v1, v2);
 }
+
+double nestedness_value(NumericVector n1, NumericVector n2, int v1 = -1, int v2 = -1) {
+    std::vector<int> n1_vec, n2_vec;
+    n1_vec.reserve(n1.size());
+    n2_vec.reserve(n2.size());
+
+    std::copy_if(n1.begin(), n1.end(), std::back_inserter(n1_vec), [v2](int x)
+                 { return x != v2; });
+    std::copy_if(n2.begin(), n2.end(), std::back_inserter(n2_vec), [v1](int x)
+                 { return x != v1; });
+
+    if (n1_vec.size() == 0 || n2_vec.size() == 0) {
+        return 0;
+    }
+
+    std::vector<int> intersection;
+
+    std::set_intersection(
+        n1_vec.begin(),
+        n1_vec.end(),
+        n2_vec.begin(),
+        n2_vec.end(),
+        std::back_inserter(intersection));
+
+    auto intersect_length = intersection.size();
+
+    return (double)intersect_length / (double)std::min(n1_vec.size(), n2_vec.size());
+}

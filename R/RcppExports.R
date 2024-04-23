@@ -32,6 +32,11 @@ nested_direction <- function(n1, n2, v1, v2) {
 }
 
 #' @export
+nestedness_value <- function(n1, n2, v1, v2) {
+    .Call(`_nested_comms_nestedness_value`, n1, n2, v1, v2)
+}
+
+#' @export
 get_lk_all_topsort <- function(neighs) {
     .Call(`_nested_comms_get_lk_all_topsort`, neighs)
 }

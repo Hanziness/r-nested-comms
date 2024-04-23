@@ -1,8 +1,8 @@
 # Nested Community Detection Algorithms
-This R package contains algorithms to find overlapping fully nested subgraphs in both bipartite and non-bipartite networks. This package is part of the work submitted in the article *Detecting and generating overlapping nested communities*:
+This R package contains algorithms to do hierarchical clustering for nestedness and find overlapping fully nested subgraphs in both bipartite and non-bipartite networks. This version of the package (extended with hierarchical clustering algorithms) is part of the work submitted in the following article:
 
 ```
-Gera, I., & London, A. (2023). Detecting and generating overlapping nested communities. Applied Network Science, 8(51). https://doi.org/10.1007/s41109-023-00575-2
+TBA
 ```
 
 ## Installation
@@ -18,6 +18,22 @@ This will build the package and install it as `nested.comms`.
 
 ## Usage
 The package operates on `igraph` networks, so make sure to prepare your networks as `igraph` graphs. Vertices may be named, edge weights and directionality are ignored.
+
+### Hierarchical clustering (new in v0.3)
+To perform hierarchical clustering, one can use two approaches. The _bottom-up_ method is done using R's built-in `hclust` method, wrapped by `bottom_up_clustering`. This returns a list of cluster memberships, one vector for each level:
+
+```{r}
+results <- nested.comms::bottom_up_clustering(graph, method = "complete", level_per_node = TRUE)
+```
+
+_Top-down_ hierarchical clustering is implemented as a modified version of the Girvan-Newman algorithm. In order to perform top-down clustering, we first create a _nestedness graph_ using the function `nestedness_graph` (this returns a full graph where the edge weights are the nestedness values), and then run `girvan_newman_nestedness` on it. The result here is once again a list of cluster memberships, each vector corresponding to a clustering level.
+
+```{r}
+nested_g <- nested.comms::nestedness_graph(g)
+results <- nested.comms::girvan_newman_nestedness(nested_g, method = "full")
+```
+
+For more information, check the documentation of each function!
 
 ### Community detection
 To perform community detection on an `igraph` network, use the `nested_node_comms` function:

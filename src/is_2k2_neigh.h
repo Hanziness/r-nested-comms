@@ -37,3 +37,7 @@ bool is_2k2_neigh(Rcpp::NumericVector n1, Rcpp::NumericVector n2, int v1, int v2
 //' @export
 // [[Rcpp::export]]
 int nested_direction(Rcpp::NumericVector n1, Rcpp::NumericVector n2, int v1, int v2);
+
+//' @export
+// [[Rcpp::export]]
+double nestedness_value(Rcpp::NumericVector n1, Rcpp::NumericVector n2, int v1, int v2);
